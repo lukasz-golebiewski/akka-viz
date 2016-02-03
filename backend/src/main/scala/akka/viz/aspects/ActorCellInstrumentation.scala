@@ -2,10 +2,13 @@ package akka.viz.aspects
 
 import akka.actor._
 import akka.dispatch.MessageDispatcher
+import akka.util.Timeout
 import akka.viz.config.Config
 import akka.viz.events.{EventSystem, internal}
 import org.aspectj.lang.JoinPoint
 import org.aspectj.lang.annotation._
+
+import scala.concurrent.Future
 
 @Aspect
 class ActorCellInstrumentation {
@@ -51,6 +54,14 @@ class ActorCellInstrumentation {
 
 
     }
+  }
+
+  @Pointcut(value = "call(* *.internalAsk$extension(..)) && args(actorRef, message, timeout)")
+  def askPointcut(actorRef: ActorRef, message: Any, timeout: Timeout): Unit = {}
+
+  @Before(value = "askPointcut(actorRef, message, timeout)")
+  def captureAsk(actorRef: ActorRef, message: Any, timeout: Timeout): Unit = {
+    println(s"caught ask $actorRef ? $message")
   }
 
 }

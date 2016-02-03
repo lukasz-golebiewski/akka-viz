@@ -8,7 +8,7 @@ import scala.collection.immutable
 
 object EventSystem {
 
-  private implicit val system = ActorSystem(Config.internalSystemName)
+  private[viz] implicit val system = ActorSystem(Config.internalSystemName)
   private val publisher = system.actorOf(Props(classOf[EventPublisherActor]))
 
   private[akka] def publish(event: internal.Event): Unit = {
